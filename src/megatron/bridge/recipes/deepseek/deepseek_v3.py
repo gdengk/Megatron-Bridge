@@ -129,13 +129,15 @@ def model_config(
     }
     pp_size = pipeline_parallelism or 1
     vp_size = virtual_pipeline_parallelism or 1
-    if (pp_size, vp_size) not in map_pp_vp_to_layout:
-        raise ValueError(
-            f"Invalid PP and VP size: {pp_size} and {vp_size} to infer PP layout "
-            f"for DeepSeek V3. Known PP and VP combinations: {map_pp_vp_to_layout.keys()}"
-        )
+    # if (pp_size, vp_size) not in map_pp_vp_to_layout:
+    #     raise ValueError(
+    #         f"Invalid PP and VP size: {pp_size} and {vp_size} to infer PP layout "
+    #         f"for DeepSeek V3. Known PP and VP combinations: {map_pp_vp_to_layout.keys()}"
+    #     )
 
-    layout = map_pp_vp_to_layout[(pp_size, vp_size)]
+
+    # layout = map_pp_vp_to_layout[(pp_size, vp_size)]
+    layout = None
 
     if layout is not None:
         layout = list([list(x) for x in layout])  # yield all the elements

@@ -12,9 +12,13 @@ if HAVE_MEGATRON_BRIDGE:
         deepseek_v3_pretrain_config_gb200,
         deepseek_v3_pretrain_config_gb300,
         deepseek_v3_pretrain_config_h100,
+        deepseek_v3_pretrain_config_singlenode,
     )
 
 from .deepseek_workload_base_configs import (
+    DEEPSEEK_V3_PRETRAIN_CONFIG_SINGLENODE_BF16_V1,
+    DEEPSEEK_V3_PRETRAIN_CONFIG_SINGLENODE_FP8_CS_V1,
+    DEEPSEEK_V3_PRETRAIN_CONFIG_SINGLENODE_FP8_MX_V1,
     DEEPSEEK_V3_PRETRAIN_CONFIG_B200_BF16_V1,
     DEEPSEEK_V3_PRETRAIN_CONFIG_B200_BF16_V2,
     DEEPSEEK_V3_PRETRAIN_CONFIG_B200_FP8_CS_V1,
@@ -51,6 +55,10 @@ from .deepseek_workload_base_configs import (
 
 
 __all__ = [
+    # Single-node (4-GPU)
+    "DEEPSEEK_V3_PRETRAIN_CONFIG_SINGLENODE_BF16_V1",
+    "DEEPSEEK_V3_PRETRAIN_CONFIG_SINGLENODE_FP8_CS_V1",
+    "DEEPSEEK_V3_PRETRAIN_CONFIG_SINGLENODE_FP8_MX_V1",
     # V1 (GBS=4096 for Blackwell, GBS=16384 for H100)
     "DEEPSEEK_V3_PRETRAIN_CONFIG_B300_BF16_V1",
     "DEEPSEEK_V3_PRETRAIN_CONFIG_B300_FP8_CS_V1",
@@ -95,5 +103,6 @@ if HAVE_MEGATRON_BRIDGE:
             "deepseek_v3_pretrain_config_b300",
             "deepseek_v3_pretrain_config_b200",
             "deepseek_v3_pretrain_config_h100",
+            "deepseek_v3_pretrain_config_singlenode",
         ]
     )

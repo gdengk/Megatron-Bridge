@@ -329,6 +329,12 @@ def parse_cli_args():
     # Slurm
     slurm_args = parser.add_argument_group("Slurm arguments")
     slurm_args.add_argument(
+        "--localrun",
+        action="store_true",
+        help="Run locally using torchrun instead of submitting to Slurm or DGXCloud. Uses --num_gpus GPUs on a single node.",
+        default=False,
+    )
+    slurm_args.add_argument(
         "-a",
         "--account",
         type=str,
@@ -460,7 +466,7 @@ def parse_cli_args():
         "-g",
         "--gpu",
         type=str,
-        choices=["h100", "b200", "gb200", "gb300", "b300"],
+        choices=["h100", "b200", "gb200", "gb300", "b300", "singlenode"],
         help="Target gpu type.",
         required=True,
     )

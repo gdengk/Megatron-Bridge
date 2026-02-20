@@ -243,6 +243,74 @@ def deepseek_v3_pretrain_config_b200(
     return cfg
 
 
+def deepseek_v3_pretrain_config_singlenode(
+    precision: str = "bf16", mock: bool = True, config_variant: str = "v1"
+) -> ConfigContainer:
+    """Single-node (4-GPU), baseline config."""
+    base_cfg = get_workload_base_config(
+        model_family_name="deepseek",
+        model_recipe_name="deepseek_v3",
+        gpu="singlenode",
+        compute_dtype=precision.upper(),
+        task="pretrain",
+        config_variant=config_variant,
+    )
+    precision_config = get_precision_config(precision)
+
+    cfg = pretrain_config(
+        mock=mock,
+        precision_config=precision_config,
+        pipeline_model_parallel_size=base_cfg.pipeline_model_parallel_size,
+        virtual_pipeline_model_parallel_size=base_cfg.virtual_pipeline_model_parallel_size,
+        moe_flex_dispatcher_backend=base_cfg.moe_flex_dispatcher_backend,
+        layout=None,
+    )
+    set_deepseek_v3_common_configs(cfg)
+    set_workload_base_configs(cfg, base_cfg)
+
+    def get_data():
+        # Parameters
+        seq_length = 4096
+        seed = 1234
+        val_test_path = "/lustre/share/coreai_mlperf_training/data/c4/dsv3_8b/c4-validation-91205-samples.en_text_document"
+
+        is_8b_dataset = True
+        r = [6] if is_8b_dataset else [6, 7]
+        train_datasets = [f"/lustre/share/coreai_mlperf_training/data/c4/dsv3_8b/c4-train.en_{idx}_text_document" for idx in r]
+        train_datasets_weights = [50] * len(r)
+
+        data_paths = [(train_datasets, train_datasets_weights), ([val_test_path], None), ([val_test_path], None)]
+
+        from megatron.bridge.training.config import GPTDatasetConfig
+
+        return GPTDatasetConfig(
+            dataloader_type="single",
+            blend_per_split=data_paths,
+            sequence_length=seq_length,
+            random_seed=seed,
+            num_workers=8,
+            path_to_cache="/lustre/fsw/coreai_dlalgo_llm/gdeng/mbridge/workspace/dsv3test_nemo2602-gb300/cache",
+            reset_position_ids=False,
+            reset_attention_mask=False,
+            eod_mask_loss=False,
+        )
+    cfg.dataset = get_data()
+    cfg.dataset.num_workers = 0
+    cfg.dataset.pin_memory = False
+    cfg.model.cuda_graph_warmup_steps = 0
+
+    # single node setup
+    cfg.model.num_layers = 4
+    cfg.model.num_moe_experts = 8
+    cfg.model.moe_layer_freq=[0] + [1] * 3
+    cfg.model.moe_router_group_topk=1
+    cfg.model.moe_router_num_groups=1
+
+
+
+    return cfg
+
+
 def deepseek_v3_pretrain_config_h100(
     precision: str = "bf16", mock: bool = True, config_variant: str = "v1"
 ) -> ConfigContainer:

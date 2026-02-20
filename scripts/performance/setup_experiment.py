@@ -29,12 +29,12 @@ from nemo_run.config import get_nemorun_home
 try:
     from argument_parser import parse_cli_args
     from utils.evaluate import calc_convergence_and_performance
-    from utils.executors import dgxc_executor, slurm_executor
+    from utils.executors import dgxc_executor, local_executor, slurm_executor
     from utils.utils import select_config_variant_interactive
 except (ImportError, ModuleNotFoundError):
     from .argument_parser import parse_cli_args
     from .utils.evaluate import calc_convergence_and_performance
-    from .utils.executors import dgxc_executor, slurm_executor
+    from .utils.executors import dgxc_executor, local_executor, slurm_executor
     from .utils.utils import select_config_variant_interactive
 
 try:
@@ -220,6 +220,7 @@ def main(
     dgxc_project_name: str,
     dgxc_pvc_claim_name: str,
     dgxc_pvc_mount_path: str,
+    localrun: bool = False,
     config_variant: str = "v1",
 ):
     """Sets up the experiment and runs it."""
@@ -274,7 +275,13 @@ def main(
     if nccl_ub:
         custom_env_vars.update({"NCCL_NVLS_ENABLE": "1"})
 
-    if not dgxc_cluster:
+    if localrun:
+        executor = local_executor(
+            num_gpus=num_gpus,
+            log_dir=log_dir,
+            custom_env_vars=custom_env_vars,
+        )
+    elif not dgxc_cluster:
         executor = slurm_executor(
             gpu=gpu,
             account=account,
@@ -582,5 +589,6 @@ if __name__ == "__main__":
         dgxc_project_name=args.dgxc_project_name,
         dgxc_pvc_claim_name=args.dgxc_pvc_claim_name,
         dgxc_pvc_mount_path=args.dgxc_pvc_mount_path,
+        localrun=args.localrun,
         config_variant=config_variant,
     )

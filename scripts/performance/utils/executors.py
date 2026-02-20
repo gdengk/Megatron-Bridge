@@ -159,6 +159,38 @@ def slurm_executor(
     return executor
 
 
+def local_executor(
+    num_gpus: int,
+    log_dir: str = None,
+    custom_env_vars: Dict[str, str] = {},
+) -> run.LocalExecutor:
+    """
+    Local executor that launches a multi-GPU job via torchrun on the current machine.
+
+    Args:
+        num_gpus: Total number of GPUs to use (maps to ntasks_per_node; single-node only).
+        log_dir: Optional path to set as NEMORUN_HOME for experiment logs.
+        custom_env_vars: Additional environment variables to set.
+    """
+    if log_dir is not None:
+        set_nemorun_home(log_dir)
+    else:
+        if os.environ.get("NEMORUN_HOME") is None:
+            logger.warning(
+                f"Logs will be written to {get_nemorun_home()}, which is probably not desired.  export NEMORUN_HOME in your shell environment or use the --log_dir argument"
+            )
+
+    env_vars = {**PERF_ENV_VARS, **custom_env_vars}
+
+    executor = run.LocalExecutor(
+        ntasks_per_node=num_gpus,
+        nodes=1,
+        env_vars=env_vars,
+        launcher="torchrun",
+    )
+    return executor
+
+
 def dgxc_executor(
     dgxc_base_url: str,
     dgxc_cluster: str,

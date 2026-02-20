@@ -257,7 +257,10 @@ class PerfEnvPlugin(Plugin):
         ):
             if compute_dtype in ["fp8_cs", "fp8_mx"]:
                 executor.env_vars["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-        del_cudnn_ln = True
+        del_cudnn_ln = False
+
+        executor.env_vars["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+        executor.env_vars["NCCL_GRAPH_REGISTER"] = "0"
         if gpu in ["h100"]:
             if model_family_name == "llama3" and model_recipe_name == "llama3_8b" and train_task == "pretrain":
                 if compute_dtype == "fp8_cs":

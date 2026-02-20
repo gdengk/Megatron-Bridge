@@ -40,16 +40,16 @@ BASE_DEEPSEEK_V3_CONFIG = WorkloadBaseConfig(
 
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V2 = replace(
     BASE_DEEPSEEK_V3_CONFIG,
-    num_gpus=256,
+    num_gpus=128,
     global_batch_size=2048,
     pipeline_model_parallel_size=4,
     virtual_pipeline_model_parallel_size=4,
-    expert_model_parallel_size=64,
+    expert_model_parallel_size=32,
     moe_flex_dispatcher_backend="hybridep",
     moe_a2a_overlap=False,
     cuda_graph_impl="transformer_engine",
     cuda_graph_scope=["attn", "moe_router", "moe_preprocess"],
-    recompute_modules=["moe_act"],
+    recompute_modules=[],
 )
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_BF16_V2 = DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V2
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_FP8_CS_V2 = DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V2
@@ -127,7 +127,7 @@ DEEPSEEK_V3_PRETRAIN_CONFIG_H100_FP8_SC_V2 = DEEPSEEK_V3_PRETRAIN_CONFIG_H100_FP
 
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V1 = replace(
     DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V2,
-    global_batch_size=4096,
+    global_batch_size=2048,
 )
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_BF16_V1 = DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V1
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_FP8_CS_V1 = DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V1
@@ -137,7 +137,7 @@ DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_NVFP4_V1 = DEEPSEEK_V3_PRETRAIN_CONFIG_GB300_V
 
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB200_V1 = replace(
     DEEPSEEK_V3_PRETRAIN_CONFIG_GB200_V2,
-    global_batch_size=4096,
+    global_batch_size=2048,
 )
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB200_BF16_V1 = DEEPSEEK_V3_PRETRAIN_CONFIG_GB200_V1
 DEEPSEEK_V3_PRETRAIN_CONFIG_GB200_FP8_CS_V1 = DEEPSEEK_V3_PRETRAIN_CONFIG_GB200_V1

@@ -90,6 +90,9 @@ def set_user_overrides(config, args):
         config.dataset = create_squad_dataset_config(
             dataset_root=args.dataset_root, seq_length=args.seq_length or 8192, packed=True
         )
+    elif args.data == "recipe":
+        # Keep the dataset configuration from the recipe as-is
+        logging.info("Using dataset configuration from recipe (no override)")
     else:
         raise ValueError(f"Unknown dataset type: {args.data}")
 

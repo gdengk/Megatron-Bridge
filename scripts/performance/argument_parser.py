@@ -255,7 +255,7 @@ def parse_cli_args():
         "--data",
         type=str,
         default="mock",
-        choices=["mock", "rp2", "squad", "squad_packed"],
+        choices=["mock", "rp2", "squad", "squad_packed", "recipe"],
         help="Dataset type to use",
     )
     data_args.add_argument("--dataset_paths", nargs="*", help="Dataset paths (for rp2 dataset)")

@@ -337,7 +337,7 @@ def main(
                 profile_step_start=profiling_start_step,
                 profile_step_end=profiling_stop_step,
                 nsys_gpu_metrics=profiling_gpu_metrics,
-                profile_ranks=profiling_ranks,
+                profile_ranks=[0,32,64,96],
             )
         )
     if pytorch_profiler:

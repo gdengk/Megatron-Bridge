@@ -299,6 +299,9 @@ def set_user_overrides(recipe: ConfigContainer, args: argparse.Namespace) -> Con
         if recipe.model.cuda_graph_impl != "none":
             recipe.dataset.packed_sequence_specs.pad_cu_seqlens = True
         recipe.dataset.dataset_kwargs = {"pad_to_max_length": True}
+    elif args.data == "recipe":
+        # Keep the dataset configuration from the recipe as-is
+        logging.info("Using dataset configuration from recipe (no override)")
     else:
         raise ValueError(f"Unknown dataset type: {args.data}")
 
@@ -342,10 +345,10 @@ def set_post_overrides(
 
     dp = int(num_gpus / (tp * pp * cp))
     logger.info(f"DP: {dp}; TP: {tp}; PP: {pp}; CP: {cp}; VP: {vp}")
-    if dp > 1 and pp > 1 and vp > 1:
-        recipe.optimizer.overlap_param_gather_with_optimizer_step = True
-        if hasattr(recipe, "comm_overlap") and isinstance(recipe.comm_overlap, CommOverlapConfig):
-            recipe.comm_overlap.overlap_param_gather_with_optimizer_step = True
+    #if dp > 1 and pp > 1 and vp > 1:
+    #    recipe.optimizer.overlap_param_gather_with_optimizer_step = True
+    #    if hasattr(recipe, "comm_overlap") and isinstance(recipe.comm_overlap, CommOverlapConfig):
+    #        recipe.comm_overlap.overlap_param_gather_with_optimizer_step = True
 
     default_num_gpus = workload_base_config.num_gpus
     if user_gbs is None:
